@@ -12,27 +12,26 @@
 #
 #---------------------------------
 
-# 1. Loading Subsetting and cleaning data
-data <- read.table(file = "exdata-data-household_power_consumption/household_power_consumption.txt", 
+# 1. Loading and Cleaning data
+data <- read.table(file = "Data/exdata-data-household_power_consumption/household_power_consumption.txt", 
                    header = TRUE, sep = ";",
                    colClasses = c("character", "character", "numeric",  "numeric",  "numeric",  "numeric",  "numeric", "numeric", "numeric"),
                    na.strings = "?",  )
 
-    # On a previous analysis I figured out that the specified dates were on the indexes ranging from: 66637 to 69516
-data <- data[seq(66637,69516), ]
-
-    #Getting Date and Times merged in something we can use
-data <- data.frame(data, DateTime = paste(data$Date, data$Time))
-data$DateTime <- strptime(as.character(data$DateTime), format = "%d/%m/%Y %T")
+    #Getting Date and Times merged in something we can use to plot correctly
+data$DateTime <- strptime(paste(data$Date, data$Time), format = "%d/%m/%Y %H:%M:%S")
+data$Date <- as.Date(data$Date, format = "%d/%m/%Y")
 
     #Reviewing data
 str(data)
 head(data)
 
+# 2. Subetting the relevant dates
+data.relevant <- subset(data, Date == "2007-02-01" | Date == "2007-02-02")
+
 # 3. Plot 1
-png(filename = "plot1.png",
-    width = 480, height = 480)
-hist(data$Global_active_power, main = "Global Active Power", xlab = "Global Active Power (kilowatts)",
+png(filename = "Course_Project_1/plot1.png", width = 480, height = 480)
+hist(data.relevant$Global_active_power, main = "Global Active Power", xlab = "Global Active Power (kilowatts)",
      col = "red")
 dev.off()
 
